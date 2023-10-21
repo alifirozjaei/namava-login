@@ -12,7 +12,8 @@
   "dependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-toastify": "^9.1.3"
   },
   "devDependencies": {
     "@babel/core": "^7.22.20",

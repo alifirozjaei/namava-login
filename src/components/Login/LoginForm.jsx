@@ -3,6 +3,7 @@ import Input from "../Form/Input.jsx";
 import styles from "./loginform.module.css";
 import validateEmail from "../../utils/validateEmail.js";
 import validatePassword from "../../utils/validatePassword.js";
+import { toast } from "react-toastify";
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,12 +18,35 @@ const LoginForm = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(
-      email,
-      password,
-      validateEmail(email),
-      validatePassword(password)
-    );
+    const emailIsValid = validateEmail(email);
+    const passwordIsValid = validatePassword(password);
+    
+    toast.dismiss();
+    if (!emailIsValid) {
+      toast.warn("ایمیل نامعتبر است.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+
+    if (!passwordIsValid) {
+      toast.warn("رمز عبور نامعتبر است.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
   };
 
   return (
