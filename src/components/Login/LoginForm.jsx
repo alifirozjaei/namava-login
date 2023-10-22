@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import login from "../../services/login.js";
 import { Player } from "@lottiefiles/react-lottie-player";
 import animation from "../../lottie/loading.json";
+import toastWarn from "../../utils/toastWarn.js";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -27,36 +28,31 @@ const LoginForm = () => {
 
     toast.dismiss();
     if (!emailIsValid) {
-      toast.warn("ایمیل نامعتبر است.", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      toastWarn("ایمیل نامعتبر است.");
     }
 
     if (!passwordIsValid) {
-      toast.warn("رمز عبور نامعتبر است.", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      toastWarn("رمزعبور نامعتبر است.");
     }
 
-    if (isLoading == false) {
+    if (isLoading == false && passwordIsValid && emailIsValid) {
       setIsLoading(true);
       login({ Password: password, UserName: email })
         .then((data) => {
-          console.log(data);
+          if (data.error) {
+            toast.dismiss();
+            if (data.error.code == 10002) {
+              toastWarn("ایمیل نامعتبر است.");
+            } else if (data.error.code == 10602) {
+              toastWarn("نام کاربری یا رمز عبور اشتباه است.");
+            } else if (data.error.code == 10006) {
+              toastWarn("ارائه دهنده ایمیل نامعتبر است.");
+            } else {
+              toastWarn(data.error.message);
+            }
+          } else {
+            console.log("login success", data.result);
+          }
         })
         .catch((error) => console.log("Error in login", error))
         .finally(() => {
