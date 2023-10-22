@@ -4,10 +4,14 @@ import styles from "./loginform.module.css";
 import validateEmail from "../../utils/validateEmail.js";
 import validatePassword from "../../utils/validatePassword.js";
 import { toast } from "react-toastify";
+import login from "../../services/login.js";
+import { Player } from "@lottiefiles/react-lottie-player";
+import animation from "../../lottie/loading.json";
+
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
   const changeEmailHandler = (emailValue) => {
     setEmail(emailValue.trim());
   };
@@ -16,11 +20,11 @@ const LoginForm = () => {
     setPassword(passwordValue.trim());
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     const emailIsValid = validateEmail(email);
     const passwordIsValid = validatePassword(password);
-    
+
     toast.dismiss();
     if (!emailIsValid) {
       toast.warn("ایمیل نامعتبر است.", {
@@ -46,6 +50,18 @@ const LoginForm = () => {
         progress: undefined,
         theme: "colored",
       });
+    }
+
+    if (isLoading == false) {
+      setIsLoading(true);
+      login({ Password: password, UserName: email })
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => console.log("Error in login", error))
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
 
@@ -75,9 +91,17 @@ const LoginForm = () => {
       <button
         className={styles["form-btn"]}
         type="submit"
-        disabled={!email || !password}
+        disabled={!email || !password || isLoading}
       >
-        ورود
+        {!isLoading && "ورود"}
+        {isLoading && (
+          <Player
+            autoplay
+            loop
+            src={animation}
+            style={{ height: "40px", width: "40px" }}
+          ></Player>
+        )}
       </button>
 
       <a href="#" className={styles["form-link"]}>
