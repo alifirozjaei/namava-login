@@ -1,9 +1,9 @@
 import React from "react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import NamavaIcon from "./components/Icons/NamavaIcon.jsx";
 import LoginForm from "./components/Login/LoginForm.jsx";
+import { ToastProvider } from "./context/ToastContext.jsx";
+import ToastWrapper from "./components/Toast/ToastWrapper.jsx";
 const App = () => {
   return (
     <>
@@ -13,12 +13,8 @@ const App = () => {
             <NamavaIcon />
             <button className="btn">ثبت نام</button>
           </div>
-          <div>
-            <ToastContainer rtl closeButton={false} />
-          </div>
-          <LoginForm />
         </div>
-      </div>
+      </ToastProvider>
     </>
   );
 };

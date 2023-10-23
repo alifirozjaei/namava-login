@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Input from "../Form/Input.jsx";
 import styles from "./loginform.module.css";
 import validateEmail from "../../utils/validateEmail.js";
 import validatePassword from "../../utils/validatePassword.js";
-import { toast } from "react-toastify";
 import login from "../../services/login.js";
 import { Player } from "@lottiefiles/react-lottie-player";
 import animation from "../../lottie/loading.json";
-import toastWarn from "../../utils/toastWarn.js";
+import { ToastContext } from "../../context/ToastContext.jsx";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const toasts = useContext(ToastContext);
+
   const changeEmailHandler = (emailValue) => {
     setEmail(emailValue.trim());
   };
@@ -26,13 +27,13 @@ const LoginForm = () => {
     const emailIsValid = validateEmail(email);
     const passwordIsValid = validatePassword(password);
 
-    toast.dismiss();
+    toasts.clearToasts();
     if (!emailIsValid) {
-      toastWarn("ایمیل نامعتبر است.");
+      toasts.addToast("ایمیل نامعتبر است.", "error");
     }
 
     if (!passwordIsValid) {
-      toastWarn("رمزعبور نامعتبر است.");
+      toasts.addToast("رمزعبور نامعتبر است.", "error");
     }
 
     if (isLoading == false && passwordIsValid && emailIsValid) {
@@ -40,18 +41,23 @@ const LoginForm = () => {
       login({ Password: password, UserName: email })
         .then((data) => {
           if (data.error) {
-            toast.dismiss();
+            toasts.clearToasts();
             if (data.error.code == 10002) {
-              toastWarn("ایمیل نامعتبر است.");
+              toasts.addToast("ایمیل نامعتبر است.", "error");
             } else if (data.error.code == 10602) {
-              toastWarn("نام کاربری یا رمز عبور اشتباه است.");
+              toasts.addToast("نام کاربری یا رمز عبور اشتباه است.", "error");
             } else if (data.error.code == 10006) {
-              toastWarn("ارائه دهنده ایمیل نامعتبر است.");
+              toasts.addToast("ارائه دهنده ایمیل نامعتبر است.", "error");
             } else {
-              toastWarn(data.error.message);
+              toasts.addToast(data.error.message, "error");
             }
           } else {
+            toasts.addToast("ورود موفقیت آمیز بود.");
             console.log("login success", data.result);
+            localStorage.setItem("token", data.result);
+            setTimeout(() => {
+              window.location.replace("https://www.namava.ir/home");
+            }, 3000);
           }
         })
         .catch((error) => console.log("Error in login", error))
