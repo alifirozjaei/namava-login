@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useReducer } from "react";
 import Input from "../Form/Input.jsx";
 import styles from "./loginform.module.css";
 import validateEmail from "../../utils/validateEmail.js";
@@ -8,24 +8,57 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import animation from "../../lottie/loading.json";
 import { ToastContext } from "../../context/ToastContext.jsx";
 
+const FORM_INITIAL_VALUE = {
+  email: "",
+  password: "",
+  loading: false,
+};
+
+function formReducer(data, action) {
+  switch (action.type) {
+    case "change_email": {
+      return {
+        ...data,
+        email: action.value,
+      };
+    }
+
+    case "change_password": {
+      return {
+        ...data,
+        password: action.value,
+      };
+    }
+
+    case "change_loading": {
+      return {
+        ...data,
+        loading: action.value,
+      };
+    }
+
+    default: {
+      throw Error("Unknown action: " + action.type);
+    }
+  }
+}
+
 const LoginForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [form, dispatch] = useReducer(formReducer, FORM_INITIAL_VALUE);
   const toasts = useContext(ToastContext);
 
   const changeEmailHandler = (emailValue) => {
-    setEmail(emailValue.trim());
+    dispatch({ type: "change_email", value: emailValue });
   };
 
   const changePasswordHandler = (passwordValue) => {
-    setPassword(passwordValue.trim());
+    dispatch({ type: "change_password", value: passwordValue });
   };
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const emailIsValid = validateEmail(email);
-    const passwordIsValid = validatePassword(password);
+    const emailIsValid = validateEmail(form.email);
+    const passwordIsValid = validatePassword(form.password);
 
     toasts.clearToasts();
     if (!emailIsValid) {
@@ -36,9 +69,9 @@ const LoginForm = () => {
       toasts.addToast("رمزعبور نامعتبر است.", "error");
     }
 
-    if (isLoading == false && passwordIsValid && emailIsValid) {
-      setIsLoading(true);
-      login({ Password: password, UserName: email })
+    if (form.loading == false && passwordIsValid && emailIsValid) {
+      dispatch({ type: "change_loading", value: true });
+      login({ Password: form.password, UserName: form.email })
         .then((data) => {
           if (data.error) {
             toasts.clearToasts();
@@ -62,7 +95,7 @@ const LoginForm = () => {
         })
         .catch((error) => console.log("Error in login", error))
         .finally(() => {
-          setIsLoading(false);
+          dispatch({ type: "change_loading", value: false });
         });
     }
   };
@@ -78,7 +111,7 @@ const LoginForm = () => {
         placeholder="ایمیل"
         label="ایمیل"
         changeHandler={changeEmailHandler}
-        value={email}
+        value={form.email}
       />
 
       <Input
@@ -87,16 +120,16 @@ const LoginForm = () => {
         placeholder="رمز عبور"
         label="رمز عبور"
         changeHandler={changePasswordHandler}
-        value={password}
+        value={form.password}
       />
 
       <button
         className={styles["form-btn"]}
         type="submit"
-        disabled={!email || !password || isLoading}
+        disabled={!form.email || !form.password || form.loading}
       >
-        {!isLoading && "ورود"}
-        {isLoading && (
+        {!form.loading && "ورود"}
+        {form.loading && (
           <Player
             autoplay
             loop
