@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { ToastContext } from "../../context/ToastContext.jsx";
-import styles from "./toastwrapper.module.css";
+import styles from "./toast-wrapper.module.css";
 import Toast from "./Toast.jsx";
 
 const ToastWrapper = () => {

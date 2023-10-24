@@ -1,12 +1,12 @@
 import React, { useContext, useReducer } from "react";
 import Input from "../Form/Input.jsx";
-import styles from "./loginform.module.css";
+import styles from "./login-form.module.css";
 import validateEmail from "../../utils/validateEmail.js";
 import validatePassword from "../../utils/validatePassword.js";
 import login from "../../services/login.js";
-import { Player } from "@lottiefiles/react-lottie-player";
-import animation from "../../lottie/loading.json";
 import { ToastContext } from "../../context/ToastContext.jsx";
+import FormLink from "../Form/FormLink.jsx";
+import SubmitButton from "../Form/SubmitButton.jsx";
 
 const FORM_INITIAL_VALUE = {
   email: "",
@@ -61,6 +61,7 @@ const LoginForm = () => {
     const passwordIsValid = validatePassword(form.password);
 
     toasts.clearToasts();
+
     if (!emailIsValid) {
       toasts.addToast("ایمیل نامعتبر است.", "error");
     }
@@ -123,29 +124,15 @@ const LoginForm = () => {
         value={form.password}
       />
 
-      <button
-        className={styles["form-btn"]}
-        type="submit"
+      <SubmitButton
+        text="ورود"
+        loading={form.loading}
         disabled={!form.email || !form.password || form.loading}
-      >
-        {!form.loading && "ورود"}
-        {form.loading && (
-          <Player
-            autoplay
-            loop
-            src={animation}
-            style={{ height: "40px", width: "40px" }}
-          ></Player>
-        )}
-      </button>
+      />
 
-      <a href="#" className={styles["form-link"]}>
-        رمز عبور خود را فراموش کرده ام
-      </a>
+      <FormLink>رمز عبور خود را فراموش کرده ام</FormLink>
 
-      <a href="#" className={styles["form-link"]}>
-        ورود از طریق شماره تلقن همراه
-      </a>
+      <FormLink>ورود از طریق شماره تلقن همراه</FormLink>
     </form>
   );
 };
