@@ -1,3 +1,8 @@
+.form-control {
+  padding-bottom: 10px;
+  position: relative;
+}
+
 .form-label {
   color: #fff;
   font-feature-settings: "clig" off, "liga" off;
@@ -30,4 +35,19 @@
 .form-input::placeholder {
   text-align: right;
   direction: rtl;
+}
+
+.hide-button {
+  position: absolute;
+  top: 35px;
+  right: 5px;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.hide-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
