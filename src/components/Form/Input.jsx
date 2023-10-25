@@ -5,11 +5,15 @@ import { HideEyeIcon } from "../Icons/HideEyeIcon.jsx";
 const Input = ({ id, type, placeholder, label, changeHandler, value }) => {
   const [isHiddenPasswrd, setIsHiddenPassword] = useState(true);
 
-  const getInputType = (isHidden) => {
-    if (isHidden) {
-      return "password";
+  const getInputType = (inputType, isHidden) => {
+    if (inputType == "password") {
+      if (isHidden) {
+        return "password";
+      } else {
+        return "text";
+      }
     } else {
-      return "text";
+      return inputType;
     }
   };
 
@@ -19,7 +23,7 @@ const Input = ({ id, type, placeholder, label, changeHandler, value }) => {
         {label}
       </label>
       <input
-        type={type == "password" ? getInputType(isHiddenPasswrd) : type}
+        type={getInputType(type, isHiddenPasswrd)}
         id={id}
         className={styles["form-input"]}
         placeholder={placeholder}
